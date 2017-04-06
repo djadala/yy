@@ -61,3 +61,5 @@ func main() {
 	fmt.Println(r) // year 99 julian day 123 in 2013 is 1999-05-03
 }
 ```
+
+[godoc](http://godoc.org/github.com/djadala/yy)
