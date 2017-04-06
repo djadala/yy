@@ -14,6 +14,6 @@ func ExampleFromFormat() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(r)
+	fmt.Println(r) // year 99 julian day 123 in 2013 is 1999-05-03
 	// Output: 1999-05-03 00:00:00 +0000 UTC
 }

@@ -28,8 +28,8 @@ func main() {
 	var d yy.IDate
 	var ref = time.Date(2013, time.June, 10, 23, 1, 2, 3, time.UTC)
 
-	d.Mo.Set([]byte("2"))
-	d.D.Set([]byte("29"))
+	d.Mo.SetI(2)
+	d.D.SetI(29)
 
 	r, err := yy.Convert(ref, &d)
 	if err != nil {
@@ -58,6 +58,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(r)
+	fmt.Println(r) // year 99 julian day 123 in 2013 is 1999-05-03
 }
 ```
