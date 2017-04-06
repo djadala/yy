@@ -12,6 +12,7 @@ Incomplete dates are:
 
 Date validity is according std `time` package, for example no leap seconds
 
+[![GoDoc](https://godoc.org/github.com/djadala/yy?status.svg)](https://godoc.org/github.com/djadala/yy)
 
 examples:
 

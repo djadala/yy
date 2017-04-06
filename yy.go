@@ -1,3 +1,4 @@
+//  Package yy converts incomplete dates to `time.Time`
 package yy
 
 import (
