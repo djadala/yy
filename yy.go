@@ -1,4 +1,41 @@
-//  Package yy converts incomplete dates to `time.Time`
+// Package yy converts incomplete dates to time.Time
+//  Incomplete dates are:
+//  -  with missing year digits
+//  -  with missing year and month
+//  -  with missing year,month and day
+//
+// Conversion is done by finding nearest valid date to reference date.
+// Date validity is according std time package, for example no leap seconds.
+//
+// Motivation for this package is large number of financial protocols and file formats, where
+// abbreviated dates are transmitted in relation to transmitted date.
+// (For example expiration date printed on credit cards have 2 year digits and month: YY/MM)
+//
+// Supported date formats are:
+//
+//  YYY-MM-DD    find X such that XYYY-MM-DD is nearest valid date
+//  YY-MM-DD     find XX such that XXYY-MM-DD is nearest valid date
+//  Y-MM-DD      find XXX such that XXXY-MM-DD is nearest valid date
+//  MM-DD        find XXXX such that XXXX-MM-DD is nearest valid date
+//  DD           find XXXX-ZZ such that XXXX-ZZ-DD is nearest valid date
+//  YYYY-MM      return YYYY-MM-01
+//  YYY-MM       find X such that XYYY-MM-01 is nearest valid date
+//  YY-MM        find XX such that XXYY-MM-01 is nearest valid date
+//  Y-MM         find XXX such that XXXY-MM-01 is nearest valid date
+//  MM           find XXXX such that XXXX-MM-01 is nearest valid date
+//  YYYY-JJJ     year+julian day JJJ=1..365/6
+//  YYY-JJJ      find X such that XYYY-JJJ is nearest valid date
+//  YY-JJJ       find XX such that XXYY-JJJ is nearest valid date
+//  Y-JJJ        find XXX such that XXXY-JJJ is nearest valid date
+//  JJJ          find XXXX such that XXXX-JJJ is nearest valid date
+//  +/-RRR       RRR days after/before today
+//  YYYY-MM-DD   full date
+//  "nothing"    return reference date
+//
+// Above, 'nearest valid date' means nearest to reference date.
+//
+// Additionally, time components can be specified, but they don't participate in finding nearest date.
+// If they are missing, hour, minute, second and fraction defaults to 0, location is copied from reference time.
 package yy
 
 import (
@@ -8,112 +45,12 @@ import (
 
 var invalidDate = errors.New("invalid date")
 
-/*
-
-
-                              incomplete   qualified
-Package yy is used to determine time from convert abbreviated dates to full time.Time instances.
-
-                              incomplete   qualified
-Package yy is used to determine time from convert abbreviated dates to full time.Time instances.
-
-
-Package yy converts incomplete dates to `time.Time`
-	Conversion is done by finding nearest valid date to reference date
-
-
-
-	So what date is 99-11-29 (YY-MM-DD) ?
-	Unfortunately this question does not have answer, but if the question is 'what date is
-	99-11-29, if today is 2000-01-01 ?' can be defined as nearest to today posible date, so
-	99-11-29 mean 1999-11-29 if today is 2000-01-01.
-
-    Motivation for this package is large number of financial protocols and file formats, where
-    abbreviated dates are transmitted in relation to transmitted date.
-
-    supported date formats are:
-
-    YYYY-MM-DD   full normal date
-    YYY-MM-DD    find X such that XYYY-MM-DD is nearest valid date
-    YY-MM-DD     find XX such that XXYY-MM-DD is nearest valid date
-    Y-MM-DD      find XXX such that XXXY-MM-DD is nearest valid date
-    MM-DD        find XXXX such that XXXX-MM-DD is nearest valid date
-    DD           find XXXX-ZZ such that XXXX-ZZ-DD is nearest valid date
-    YYYY-JJJ 	 full julian date jjj=1..365/6
-    YYY-JJJ      find X such that XYYY-JJJ is nearest valid date
-    YY-JJJ       find XX such that XXYY-JJJ is nearest valid date
-    Y-JJJ        find XXX such that XXXY-JJJ is nearest valid date
-    JJJ          find XXXX such that XXXX-JJJ is nearest valid date
-
-	+/-RRR		 RRR days after/before today
-
-  date formats:
-  "2006-01-02T15:04:05.33@-0700"
-  [date][#time][@zone]
-  date=[reldate][jdate][mdate]
-  reldate=+/-d{1,3}
-
-  +ddd
-  -ddd
-  jjj
-  y-jjj
-  yy-jjj
-  yyy-jjj
-  yyyy-jjj
-  dd
-  mm-dd
-  y-mm-dd
-  yy-mm-dd
-  yyy-mm-dd
-  yyyy-mm-dd
-  mm
-  y-mm
-  yy-mm
-  yyy-mm
-  yyyy-mm
-  yyyy
-
-
-
-
-  time formats:
-  hh
-  hh:mm[timezone]
-  hh:mm:ss[timezone]
-  hh:mm:ss.d+[timezone]
-
-  timezone formats:
-  +/-hh:mm
-  +/-hhmm
-  @timezoneName
-  z
-  l
-
-  [+-](\d\d):{0,1}(\d\d)
-  =(.+)
-  z
-  l
-
-
-  -+nnnn
-  jjj
-
-  d
-  m-d
-  y-m-d
-  y-m
-  y
-
-
-
-*/
-
-// Convert IDate to time.Time
-// rt is reference time
-// All missing time parts defaults to 0
-// All missing date parts(day & month), not subject to finding, defaults to 1
-// Missing location defaults to coping location from reference time
-// If no any date component present, converts to reference date
+// Convert IDate to time.Time.
+// rt is reference time.
+// All missing time parts defaults to 0.
+// All missing date parts(day & month), not subject to finding, defaults to 1.
+// Missing location defaults to coping location from reference time.
+// If no any date component present, converts to reference date.
 func Convert(rt time.Time, p *IDate) (time.Time, error) {
 	y, mo, dd := rt.Date()
 	var h, m, s, f int
@@ -272,16 +209,30 @@ func getFormatNum(s setter, date, format []byte, mask byte) error {
 	return s.Set(res) //strconv.Atoi(string(res))
 }
 
-// преобразува от символи до дата, формата на датата е зададен в format:
-// където има 'Y' на съответното място в data има цифра от годината
-// броят на цифрите в годината е = на броя 'Y'
-// R relative, останалите полета за дата не трябва да ги има
-// J julian date, не трябва да има месец и ден
-// D - ден
-// M - месец
-// h,m,s,f час, минути, секунди
-// L timezone
-// rt - reference date/time
+// Convert date according to format to time.Time
+// date & format are treated as strings.
+//
+// format define date,
+// at positions of chars 'Y,M,D,J,h,m,s,f,L,R' in format,
+// are expected symbols
+// of 'year,month,day,julian day,hour,minute,second,fraction,timezone,relative days'
+// in date. All other chars in format are ignored, corresponding positions in date also are ignored.
+//
+// Accepted patterns are:
+//  Y      `\d{1,4}`              year, number of 'Y's is equal to number of year digits
+//  M      `\d{2}`                month
+//  D      `\d{2}`                day
+//  J      `\d{3}`                julian day
+//  h      `\d{2}`                hour
+//  m      `\d{2}`                minute
+//  s      `\d{2}`                seconds
+//  f      `\d{1,9}`              fraction
+//  L      `[+-](\d\d):?(\d\d)`   timezone offset or
+//         `.+`                   timezone name
+//                                Special names 'l' & 'z' are Local & UTC zones
+//  R      `[+-]?\d+`             relative days
+//
+// rt are reference time.
 func FromFormat(date, format []byte, rt time.Time) (time.Time, error) {
 
 	//fmt.Printf("%s %s\n", date, format)

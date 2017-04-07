@@ -16,6 +16,7 @@ type Loc struct {
 }
 
 // Sets timezone
+// accept `[+-]\d\d:{0,1}\d\d` or `.+`
 func (t *Loc) Set(v []byte) error {
 	var (
 		l   *time.Location
