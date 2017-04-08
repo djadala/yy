@@ -141,7 +141,8 @@ type Frac struct {
 
 // Sets Frac from chars in v
 func (f *Frac) Set(v []byte) error {
-	return f.Int.Set(append(v, []byte("000000000000")...)[:9])
+	// force allocation of new backing array
+	return f.Int.Set(append(v[:len(v):len(v)], []byte("000000000000")...)[:9])
 }
 
 //////////////////////
