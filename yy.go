@@ -30,6 +30,10 @@
 //  JJJ          find XXXX such that XXXX-JJJ is nearest valid date
 //  +/-RRR       RRR days after/before today
 //  YYYY-MM-DD   full date
+//  YYYY         return YYYY-01-01
+//  YYY          find X such that XYYY-01-01 is nearest valid date
+//  YY           find XX such that XXYY-01-01 is nearest valid date
+//  Y            find XXX such that XXXY-01-01 is nearest valid date
 //  "nothing"    return reference date
 //
 // Above, 'nearest valid date' means nearest to reference date.
