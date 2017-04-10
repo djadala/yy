@@ -18,27 +18,13 @@ type Loc struct {
 // Sets timezone
 // accept `[+-]\d\d:{0,1}\d\d` or `.+`
 func (t *Loc) Set(v []byte) error {
-	var (
-		l   *time.Location
-		err error
-	)
 	if v[0] == '+' || v[0] == '-' {
 		if v[3] == ':' {
 			return t.SetHHMM(v[:3], v[4:6])
-		} else {
-			return t.SetHHMM(v[:3], v[3:5])
 		}
-
-	} else {
-		return t.SetName(v)
-		//l, err = ltzs(v)
+		return t.SetHHMM(v[:3], v[3:5])
 	}
-
-	if err != nil {
-		return err
-	}
-	t.l = l
-	return nil
+	return t.SetName(v)
 }
 
 // Returns if timezone is present in incomplete date
