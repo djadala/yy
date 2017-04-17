@@ -17,16 +17,16 @@ func totm(t *Tm, f func(*Tm) bool) (time.Time, error) {
 	if f(t) {
 		return t.Date(), nil
 	}
-	return time.Time{}, invalidDate
+	return time.Time{}, errInvalidDate
 
 }
 
-// Converts Tm to time.Time
+// Date converts Tm to time.Time
 func (t *Tm) Date() time.Time {
 	return time.Date(t.Year, t.Month, t.Day, t.Hour, t.Min, t.Sec, t.Nsec, t.Loc)
 }
 
-// Sets fields in Tm from time.Time
+// From sets fields in Tm from time.Time
 func (t *Tm) From(d time.Time) {
 	t.Year, t.Month, t.Day = d.Date()
 	t.Hour, t.Min, t.Sec = d.Clock()
@@ -34,7 +34,7 @@ func (t *Tm) From(d time.Time) {
 	t.Loc = d.Location()
 }
 
-// Sets fields in Tm from separate values
+// FromValues sets fields in Tm from separated values
 func (t *Tm) FromValues(y int, mo time.Month, d, h, m, s, f int, l *time.Location) {
 	t.Year, t.Month, t.Day = y, mo, d
 	t.Hour, t.Min, t.Sec = h, m, s
@@ -42,7 +42,7 @@ func (t *Tm) FromValues(y int, mo time.Month, d, h, m, s, f int, l *time.Locatio
 	t.Loc = l
 }
 
-// returns if Tm represent valid date/time
+// IsValid returns if Tm represent valid date/time
 // Validity is according to std time package,
 // for example leap seconds are invalid
 func (t *Tm) IsValid() bool {

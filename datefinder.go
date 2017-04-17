@@ -52,16 +52,16 @@ func nearDate(ref, d1, d2, d3 time.Time) time.Time {
 	if a < b {
 		if a < c {
 			return d1
-		} else {
-			return d3
-		}
-	} else {
-		if b < c {
-			return d2
-		} else {
-			return d3
-		}
-	}
+		} // else {
+		return d3
+		// }
+	} // else {
+	if b < c {
+		return d2
+	} // else {
+	return d3
+	// }
+	// }
 }
 
 ////////////////////////////////////////////////////////////
@@ -207,5 +207,5 @@ func nearDateFind(ref time.Time, v dateFinder) (time.Time, error) {
 			return nearDate(ref, all[0], all[1], all[2]), nil
 		}
 	}
-	return time.Time{}, invalidDate
+	return time.Time{}, errInvalidDate
 }

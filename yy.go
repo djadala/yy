@@ -47,7 +47,7 @@ import (
 	"time"
 )
 
-var invalidDate = errors.New("invalid date")
+var errInvalidDate = errors.New("invalid date")
 
 // Convert IDate to time.Time.
 // rt is reference time.
@@ -213,7 +213,7 @@ func getFormatNum(s setter, date, format []byte, mask byte) error {
 	return s.Set(res) //strconv.Atoi(string(res))
 }
 
-// Convert date according to format to time.Time
+// FromFormat converts date according to format to time.Time
 // date & format are treated as strings.
 //
 // format define date,
