@@ -47,7 +47,10 @@ import (
 	"time"
 )
 
-var errInvalidDate = errors.New("invalid date")
+var (
+	errInvalidDate       = errors.New("invalid date")
+	errInvalidComponents = errors.New("invalid date components")
+)
 
 // Convert IDate to time.Time.
 // rt is reference time.
@@ -116,7 +119,8 @@ func Convert(rt time.Time, p *IDate) (time.Time, error) {
 			return totm(&t, isValidJJJ)
 
 		}
-		panic(" year digits ???")
+		// year digits ???
+		return time.Time{}, errInvalidComponents
 	}
 
 	if p.D.Present() {
@@ -139,7 +143,8 @@ func Convert(rt time.Time, p *IDate) (time.Time, error) {
 				t.FromValues(p.Y.Get(), time.Month(p.Mo.Get()), p.D.Get(), h, m, s, f, l)
 				return totm(&t, isValid)
 			}
-			panic(" year digits ???")
+			// year digits ???
+			return time.Time{}, errInvalidComponents
 		}
 		mf := newM(y, mo, p.D.Get(), h, m, s, f, l)
 		return nearDateFind(rt, mf)
@@ -165,8 +170,8 @@ func Convert(rt time.Time, p *IDate) (time.Time, error) {
 			t.FromValues(p.Y.Get(), time.Month(p.Mo.Get()), 1, h, m, s, f, l)
 			return totm(&t, isValid)
 		}
-		panic(" year digits ???")
-
+		// year digits ???
+		return time.Time{}, errInvalidComponents
 	}
 	mo = 1
 	// assert p.Y.Digits() != 0 // dp.yyyy != nil
@@ -187,7 +192,8 @@ func Convert(rt time.Time, p *IDate) (time.Time, error) {
 		return totm(&t, isValid)
 
 	default:
-		panic(" ??")
+		// ??
+		return time.Time{}, errInvalidComponents
 	}
 }
 
