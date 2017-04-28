@@ -109,7 +109,7 @@ func (i *Int) Set(v []byte) error {
 	return err
 }
 
-// Present returns presense of Int value
+// Present returns presence of Int value
 func (i *Int) Present() bool {
 	return i.present
 }
