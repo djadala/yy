@@ -150,7 +150,7 @@ func Convert(rt time.Time, p *IDate) (time.Time, error) {
 		return nearDateFind(rt, mf)
 	}
 
-	dd = 1
+	// dd = 1
 
 	if p.Mo.Present() {
 		switch p.Y.Digits() {
@@ -173,7 +173,7 @@ func Convert(rt time.Time, p *IDate) (time.Time, error) {
 		// year digits ???
 		return time.Time{}, errInvalidComponents
 	}
-	mo = 1
+	// mo = 1
 	// assert p.Y.Digits() != 0 // dp.yyyy != nil
 
 	switch p.Y.Digits() {
